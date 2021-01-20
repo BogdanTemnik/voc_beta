@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "extended-byway-300322",
+  "private_key_id": "03f9ebbfec6ecdf6a6c3936b90a5fc0df4a6ff5f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCdnCDnMzELQuwE\n3r8U78HKPLQz31WbNu2/jks3MDkXEOGqiJlPFRwybQtxFU6lleUOwS7SxZKi28Pe\nIUUlOKcmZhjj4o4bftvQ5pE7aWPxKsujiXHejBXLIJdEFuUxdrhhzXrd9FX83vZ/\nVEOx35zPlFkPr9jkuupzhdAKb2yUJ/u0EWN/P4e786YD3SWmtda29VYAscCC6vit\nmF7OqXkbhqBxUdE2jnBUMfWtzjlMKaXDatIBUp0peivilXhRkbG1X+5lE2cTqUmw\noo6TkWF1DKc5o3T8izFS9hNYwSXyw+jw/z4TTbZ4xIzx5Ka1Tm25nynzGC4iX1/a\nLWO3K5KBAgMBAAECggEANU2q0RZ+lTzuXp1IyZdmlnOeTFbReHuEv76rkIAmJrdm\nYsrs8pKEpUc80eNvZFAEFk/eepkoRR0HKrZc0MBOw41PCK9D+WeXhxibcJjtnJAp\nK+ddk/MToc2lavlFTUvGAwm/7pXmiO2NNzXz6RHj0k5tKoGB3KWcijJs0EKr2ZT+\nS5lxYMm3Ha4Si9GORZKFlVu7hW75rmOqOK5QZ2asPF3X/GfCoZ1kWnpiypoBHAY9\nD88F7TEB1yl9HiB9K/fJ80g3KeHJEhMk05gTP0dzYtpmYz/Js/OkP2V/56aqdV9r\n+93wbmdIpGX9Ma+KMLprtj8kWLTKXgTzUH0AuArquwKBgQDKZRaaHx+15s6A+uY5\nxok56/kxTJsZeuWAbCesU7NIT7mWfhdaIdlUHwex7Z8uB0AOua5vDNJ5tw0ArFRM\nQcqKKCXrKjQlmNudPbwDGdQPJoihMk7t5Z1azfFC6kKXejlfWD7+IqLBA6w2GksC\n/94cS/iiShAMFNu+zNRtnowhKwKBgQDHWn99mVp9LxDBnSZeJOYvPhauTuqSEFnH\nF4lSILKRzdmixt+fvQOI+bzRyvNixYvsnIeWubktgscGSoAgsmn5zpv4A4fl3GYA\ngE+uODnD3OCyrp5NywM/1n1aL85QVNdr9jncr96sZVD2SDuqEdfezGQdyH4NSb/h\nsULu3YgNAwKBgQCwadR9mktlnjy5J/isu2S5W/nlAsTePMT2X09lYb+PdA5sIpPw\nODjangFzEZAB6sfnDeoBWcfL18Y5o/wGTAJi0gPbKvoxGz+xmzHZ8hVo70mAV/18\nVvwFPiThEpfguORxOtYNZds/KhhdQCXKA4RyXbXmn2/FWBkCAj/XHK8/6QKBgQC/\npgTCnlcb2c9mEsn738VazXnIgR2I5ico+zuMtNp2yUrc7gu16WQons4jcdShtABc\nq+69vDaFxh/HsH+U73BqM3JF8D8Jf+SfvrrbZjpCTWnG3ZBagTzSdkV0GllhaO7g\nX4oo2vpbCdvXqIGTcivxiNUGvORRqgDJ3DvYnyhYOQKBgCaPxrRzRqcDySzBDXKy\nijGJsSTCMw8KiOjFzInibenxYpgMGGjWfjW1WGpDHZ6OJ5aHbhFX7xsdKfUZ1Yva\nPN33IldMSFCMnqPoqjiLfS6LDH9/AhtcES1eMxhWczZucTh6/FZ3SwIzEIt6+/Dt\nE5+YNc3+raXdAb3FjzILMF19\n-----END PRIVATE KEY-----\n",
+  "client_email": "bogdantemnik@extended-byway-300322.iam.gserviceaccount.com",
+  "client_id": "116186071588742931093",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bogdantemnik%40extended-byway-300322.iam.gserviceaccount.com"
+}

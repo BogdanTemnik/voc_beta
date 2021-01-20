@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "proven-fx-300320",
+  "private_key_id": "149eb48d1df52e3fd439d18d3402237f118134c9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCp/GpHwXa73xa3\nKUanZTE5UxGLRghHVjI2otOkdJkfwDyBmO5B/j3xb9zU5Faix4Qmn53oFmMJPXAp\n/+VrJnq87zftn1bgr5XsMrkbgEqQgDQpWvFrP97EFo+/ZDA9JwzT2q+nJU2OXajz\nUAaMA3KCwk0rkUdT9pZbsyCZHQj1heD1Cl+x12VvMyflINYqQntyjmMDGZNt6Bwb\nnN5i5+PBibRDnZdHgtMmNqLOJDf9dH7VnmODbULmNT9m0It1Q8MKQH7SbGwoZoGX\nQvdnjWFdF+0nU9obw1yLL6i9gvMMBl+giTiPcCOPwvS2dGFB8+kASnh2ggrVRi7c\nDfW26teNAgMBAAECggEAOZtjYUH9PRoTlqsUWLKAhg7SyUJIl/RsO/vegcNKCWqa\nlsj/JbpFv8bLLhLcEXpQHM7HMtozYfRCSNmCJFf8DH99krgHN0oKIuvls548ps/r\n3YAGhPQ2SHnk6VXIy1Cqljlsgdawe+jd0udx8I1Sh2HVyUgIxjmxJw6Do6AlYx8X\n0TpKZWTT454Y1v5ywdfvIzs73gWhRVxfltrF7v/JjqNl93lNViSMwHY0Dc6Qvycz\n9sUdVZYs+PTouAaMOa1pDkUlsyKYoPL9sig+SP0cX3xgqYH7M5euRqgWGYw8gL0q\nZd4jCHENjC6sVyph/o9oWHeamn3l6Xq1RGpO0HrH+QKBgQDmWeFgDd9YA92NQrvh\nmEVsj04kfTUMyAlZyvgp6PlQ9HghuJYhXbCEoFo5Tugb75SelpPzacAR1Rsx7ayw\ncoBAy5J1aGEbeHizKu/due7apyH+r+D9sswQWF/WqvWuPkCjsitxPu+GB/MyWxmg\nxDFMnBgHPZFvs1U7aajhuTpzlwKBgQC86dZzh6tRfRuwwJoAn5rL3DFLHky7c0Al\nSgAB75iUnge40tLYVOcLOHBng61E0Igrsq8Cf/Gg7avRhoThn9NoG1Z1wjG5Qmj4\nKIcChORiGKP6P3JA4OYf+sQ9S3Ek129vUK4JoV7GLmM+hTueEA80Wyk1eAGXVgh6\nqTIp4cbiewKBgCLuKkD4mY+tNmF/ZyI0hwKJUJ4z5mGDy/cz0iH41CW0jKsAZLO2\nk1fpQQVDs+rYj77kspbMyHVrzW3qzq8LDevFcvYe1+rkf9kbf7gtw8ygX4VRglq2\nTD+GRzI0RoEfq4mnMPNBSe0XM4fFTMOWPKuTWAlxCqbXmOsjgJqKDhUNAoGAE4j2\nxSGdZKLUTzXLdw8KGdSeQE9UzfmAA5sgXxLgq1WgJMugRACbl7xxWzLxovERc7tZ\nf5+tY9/P6a3IZfB6EwToruqy655jbm36cBc/6qjzo/gVn4HiKiJrUo9Plui0PEWS\niapnO4UmfBuY66JrgBWBMGdFetnJrK18Y3pWb6sCgYEAh8PDGOlob32PMvScK4j3\ndQB/5FLe0oUvLxy9xR62diRvmqeTFkamb8EuyoLZqcL2lO2MQNqfiJMAtOVehlQq\nJDSrjIcHxJE2oxdmZC0lIhT1ZIn1QiJSLThPyKDeYIzta0YN9/dRe+akBWYNkQ0h\nD9U79lseDKbZJdLMcj/3J3U=\n-----END PRIVATE KEY-----\n",
+  "client_email": "bogdantemnik@proven-fx-300320.iam.gserviceaccount.com",
+  "client_id": "109653378040254191232",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/bogdantemnik%40proven-fx-300320.iam.gserviceaccount.com"
+}
