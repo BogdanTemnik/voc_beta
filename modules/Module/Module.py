@@ -7,6 +7,7 @@ import random
 import requests
 from deep_translator import GoogleTranslator
 from nltk import word_tokenize
+from textblob import TextBlob
 
 class Module():
     def __init__(self):
@@ -64,6 +65,8 @@ class Module():
             exec(f"navigation_keyboard.row({','.join(el)})")
 
         navigation_keyboard.add(types.InlineKeyboardButton('<', callback_data='previous_list'), types.InlineKeyboardButton('>', callback_data='next_list'))
+        if option == 'None':
+            navigation_keyboard.add(types.InlineKeyboardButton('clear', callback_data='clear_vocabulary'))
 
         if edit:
             navigation_keyboard.add(types.InlineKeyboardButton('add', callback_data='add_new_word'))
@@ -91,15 +94,20 @@ class Module():
             bot.send_message(message.chat.id, 'module with this name is already created')
 
     def add_from_input(self, message):
+        add_more_from_input_first_keyboard = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton('add more', callback_data='add_more_from_input_first'))
         if self.db.is_unique(message.chat.id, message.text, all=True):
-            word_obj = self.tr.create_object(message.chat.id, message.text, source=detect(message.text), destination='en') if detect(message.text) != 'en' else self.tr.create_object(message.chat.id, message.text, source=detect(message.text), destination='ru')
-            word_obj['module'] = self.module_name
+            try:
+                word_obj = self.tr.create_object(message.chat.id, message.text, source='ru', destination='en') if TextBlob(message.text).detect_language() != 'en' else self.tr.create_object(message.chat.id, message.text, source='en', destination='ru')
+                word_obj['module'] = self.module_name
 
-            self.db.words_db[f'{message.chat.id}'].insert_one(word_obj)
+                self.db.words_db[f'{message.chat.id}'].insert_one(word_obj)
 
-            bot.send_message(message.chat.id, f'word added')
+                bot.send_message(message.chat.id, f'word added', reply_markup=add_more_from_input_first_keyboard)
+            except:
+                bot.send_message(message.chat.id, 'unknown word', reply_markup=add_more_from_input_first_keyboard)
+
         else:
-            bot.send_message(message.chat.id, 'word already in dictionary, you can add it from them')
+            bot.send_message(message.chat.id, 'word already in dictionary, you can add it from them', reply_markup=add_more_from_input_first_keyboard)
 
 
     def send_all_modules(self, id):

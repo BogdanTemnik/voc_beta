@@ -24,19 +24,21 @@ class Database:
 
         return collection.find({}).skip(start).limit(stop).sort([('languages.src', 1)])
 
+    def auth_user(self, message):
+        current_user_data_collection = self.users_db[f'{message.chat.id}']
+        current_user_data_collection.insert_one(
+            {
+                'first_name': message.chat.first_name,
+                'last_name': message.chat.last_name,
+                'username': message.chat.username,
+                'auth_datetime': datetime.datetime.now()
+            }
+        )
+
     def add_one_to_voc(self, word_obj, message, module=None):
         #insert user object into current user collection
         if f'{message.chat.id}' not in self.words_db.list_collection_names():
-            current_user_data_collection = self.users_db[f'{message.chat.id}']
-            current_user_data_collection.insert_one(
-                {
-                    'first_name': message.chat.first_name,
-                    'last_name': message.chat.last_name,
-                    'username': message.chat.username,
-                    'auth_datetime': datetime.datetime.now()
-                }
-            )
-
+            self.auth_user(message)
         #word_obj['values']['src'] = word_obj['values']['src'].lower()
         #word_obj['values']['dest'] = word_obj['values']['dest'].lower()
 
@@ -131,3 +133,6 @@ class Database:
 
     def is_vocabulary_empty(self, id):
         return True if not self.words_db[f"{id}"].count() != 0 else False
+
+    def clear_vocabulary(self, id):
+        self.words_db[f'{id}'].remove()

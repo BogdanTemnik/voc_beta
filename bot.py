@@ -1,4 +1,4 @@
-from config.config import bot_object as bot
+from config.config import bot_object as bot, teachers
 from modules.Translator.Translator import Translator
 from telebot import types
 from modules.Database.Database import Database
@@ -21,8 +21,8 @@ main_keyboard = types.ReplyKeyboardMarkup()
 main_keyboard.add(types.KeyboardButton('translate'), types.KeyboardButton('my vocabulary'))
 main_keyboard.add(types.KeyboardButton('new module'), types.KeyboardButton('manage modules'))
 teachers_keyboard = types.ReplyKeyboardMarkup()
-teachers_keyboard.add(types.KeyboardButton(''))
-
+teachers_keyboard.add(types.KeyboardButton('manage students'), types.KeyboardButton('class statistic'))
+teachers_keyboard.add(types.KeyboardButton('manage student/students'), types.KeyboardButton('class statistic'))
 
 trans = Translator()
 
@@ -35,7 +35,10 @@ def get_command(message):
     elif message.text == '/test':
         print(module.stats)
     elif message.text == '/forteachers':
-        pass
+        if message.chat.id not in teachers:
+            bot.send_message(message.chat.id, 'you aren\'t teacher')
+        else:
+            bot.send_message(message.chat.id, 'you are in', reply_markup=teachers_keyboard)
 
 @bot.message_handler(content_types=['text'])
 def get_text_command(message):
@@ -46,9 +49,9 @@ def get_text_command(message):
         bot.send_message(message.chat.id, 'im waiting for your word:')
         bot.register_next_step_handler(message, trans.send_word)
     elif message.text == 'my vocabulary':
-        print(str(id))
+        db.auth_user(message)
         print(str(message.chat.id) not in db.words_db.collection_names())
-        if str(message.chat.id) not in db.words_db.collection_names():
+        if str(message.chat.id) not in db.words_db.collection_names() or db.words_db[f'{message.chat.id}'].count() == 0:
             bot.send_message(message.chat.id, 'your vocabulary is empty')
         else:
             #switch on your own vocabulary database
@@ -64,6 +67,7 @@ def get_text_command(message):
     elif message.text == 'try knowledge':
         pass
     elif message.text == 'manage modules':
+        db.auth_user(message)
         print(1)
         if not db.collection_length(message.chat.id, all=True) or db.collection_length(message.chat.id) == db.collection_length(message.chat.id, all=True):
             more_create_module_keyboard = types.InlineKeyboardMarkup()
@@ -73,6 +77,7 @@ def get_text_command(message):
             module.send_all_modules(message.chat.id)
 
     elif message.text == 'new module':
+        db.auth_user(message)
         bot.send_message(message.chat.id, 'enter module name')
         bot.register_next_step_handler(message, module.send_choice)
 
@@ -137,6 +142,9 @@ def get_query(query):
     elif query.data == 'input':
         bot.send_message(query.message.chat.id, 'enter the word:')
         bot.register_next_step_handler(query.message, module.add_from_input)
+    elif query.data == 'add_more_from_input_first':
+        bot.send_message(query.message.chat.id, 'enter the word:')
+        bot.register_next_step_handler(query.message, module.add_from_input)
 
     elif query.data.split('_')[-1] == 'rename':
         module.old_module_name = query.data.split('_')[0]
@@ -152,9 +160,6 @@ def get_query(query):
         module.send_current_ten(query.message.chat.id, skip, count, module=module.current_module, option=db.current_option, edit=True)
 
     elif query.data.split('_')[-1] == 'editword':
-        '''        if edit:
-            navigation_keyboard.add(types.InlineKeyboardButton('delete', callback_data='delete_current_word'), types.InlineKeyboardButton('add', callback_data='add_new_word'))
-            navigation_keyboard.add(types.InlineKeyboardButton('alter', callback_data='alter_word'))'''
         module.current_word_index = int(query.data.split('_')[0]) - 1
         functionality_keyboard = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton('delete', callback_data='delete_current_word'), types.InlineKeyboardButton('alter', callback_data='alter_word'))
         bot.send_message(query.message.chat.id, '.', reply_markup=functionality_keyboard)
@@ -164,7 +169,6 @@ def get_query(query):
         bot.send_message(query.message.chat.id, f'module with name {query.data.split("_")[0]} was deleted')
 
     elif len(query.data.split("_")) == 3 and query.data.split('_')[-1] == 'show':
-        print('AAAAAAAA', query.data)
         print(module.current_ten[(int(query.data.split('_')[0]) % 10) - 1])
         voc.send_full_word(query.message.chat.id, module.current_ten[(int(query.data.split('_')[0]) % 10) - 1])
 
@@ -239,5 +243,9 @@ def get_query(query):
         bot.send_message(query.message.chat.id, 'are you sure? if you accept, your progress will be not saved', reply_markup=types.InlineKeyboardMarkup().add(types.InlineKeyboardButton('im sure', callback_data='sureness')))
     elif query.data == 'sureness':
         bot.send_message(query.message.chat.id, 'stopped')
+    elif query.data == 'clear_vocabulary':
+        db.clear_vocabulary(query.message.chat.id)
+        bot.send_message(query.message.chat.id, 'cleared')
+
 
 bot.polling()

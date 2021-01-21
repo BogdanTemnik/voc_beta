@@ -8,6 +8,8 @@ from PyDictionary import PyDictionary
 import nltk
 import enchant
 from modules.Database.Database import Database
+import langdetect
+from textblob import TextBlob
 
 db = Database()
 
@@ -45,6 +47,7 @@ class Translator:
             return {
             'is_learnt': False,
             'module': None,
+            'teacher': None,
             'values': {
                 'src': word.lower(),
                 'dest': from_src_to_dest.translate(word).lower()
@@ -80,9 +83,10 @@ class Translator:
         add_to_vocab = types.InlineKeyboardMarkup()
         add_to_vocab.add(types.InlineKeyboardButton('add to vocabluary', callback_data='add_to_voc'))
         try:
-            if self.translator.detect(message.text).lang != 'en':
+            if TextBlob(message.text).detect_language() != 'en':
+                print('185')
                 #create word object
-                word_obj = self.create_object(message.chat.id, message.text)
+                word_obj = self.create_object(message.chat.id, message.text, source='ru', destination='en')
 
                 print(db.is_unique(message.chat.id, message.text.lower()))
                 self.current_word_obj = word_obj
@@ -110,6 +114,6 @@ class Translator:
 
                 #send pronunciation
                 bot.send_voice(message.chat.id, word_obj['audio']['dest'], reply_markup=add_to_vocab)
-        except:
-            pass
+        except Exception as e:
+            print(e)
 
