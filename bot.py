@@ -1,16 +1,19 @@
-from config.config import bot_object as bot, teachers
+from config.config import bot_object as bot, teachers, admins
 from modules.Translator.Translator import Translator
 from telebot import types
 from modules.Database.Database import Database
 from modules.Vocabulary.Vocabulary import Vocabulary
 from modules.Module.Module import Module
+from modules.Admin.Admin import Admin
 import random
 import telebot
 import time
+import smtplib
 
 db = Database()
 voc = Vocabulary()
 module = Module()
+admin = Admin()
 
 skip = 0
 count = 0
@@ -20,16 +23,25 @@ main_keyboard = types.ReplyKeyboardMarkup()
 
 main_keyboard.add(types.KeyboardButton('translate'), types.KeyboardButton('my vocabulary'))
 main_keyboard.add(types.KeyboardButton('new module'), types.KeyboardButton('manage modules'))
+main_keyboard.add(types.KeyboardButton('become teacher'))
+
 teachers_keyboard = types.ReplyKeyboardMarkup()
 teachers_keyboard.add(types.KeyboardButton('manage students'), types.KeyboardButton('class statistic'))
-teachers_keyboard.add(types.KeyboardButton('manage student/students'), types.KeyboardButton('class statistic'))
+
+admin_keyboard = types.ReplyKeyboardMarkup()
+admin_keyboard.add(types.KeyboardButton('accept applications'))
 
 trans = Translator()
 
-@bot.message_handler(commands=['start', 'help', 'translate', 'test', 'forteachers'])
+@bot.message_handler(commands=['start', 'help', 'translate', 'test', 'forteachers', 'admin'])
 def get_command(message):
     if message.text == '/translate':
         pass
+    elif message.text == '/admin':
+        if message.chat.id not in admins:
+            bot.send_message(message.chat.id, 'you aren\'t admin. Permission rejected')
+        else:
+            bot.send_message(message.chat.id, 'you are in admin display', reply_markup=admin_keyboard)
     elif message.text == '/start':
         bot.send_message(message.chat.id, 'lets learn new words!', reply_markup=main_keyboard)
     elif message.text == '/test':
@@ -80,6 +92,24 @@ def get_text_command(message):
         db.auth_user(message)
         bot.send_message(message.chat.id, 'enter module name')
         bot.register_next_step_handler(message, module.send_choice)
+    elif message.text == 'manage students':
+        pass
+    elif message.text == 'become teacher':
+        if db.is_unique_application(message.chat.id) and message.chat.id not in teachers:
+            db.send_application_for_teaching(message)
+            bot.send_message(message.chat.id, 'your application will be viewed')
+        elif message.chat.id in teachers:
+            bot.send_message(message.chat.id, 'you are already teacher')
+        else:
+            bot.send_message(message.chat.id, 'your application already on consideration')
+
+    elif message.text == 'accept applications':
+        print(db.applications_db['applications'].count())
+        print([el for el in db.client.list_databases()])
+        if 'application' not in [el['name'] for el in db.client.list_databases()] or db.applications_db['applications'].count() == 0:
+            bot.send_message(message.chat.id, 'applications list is empty')
+        else:
+            admin.send_applications(message)
 
 @bot.callback_query_handler(func=lambda call: True)
 def get_query(query):
@@ -99,6 +129,7 @@ def get_query(query):
         module.add_to_the_module(query, word_number)
 
     elif query.data == 'add_to_voc':
+        db.auth_user(query.message)
         if db.is_unique(query.message.chat.id, trans.current_word_obj['values']['src'], module=module.current_module, all=True):
             db.add_one_to_voc(trans.current_word_obj, query.message, module=module.current_module)
             bot.answer_callback_query(callback_query_id=query.id, text='word added')
@@ -246,6 +277,12 @@ def get_query(query):
     elif query.data == 'clear_vocabulary':
         db.clear_vocabulary(query.message.chat.id)
         bot.send_message(query.message.chat.id, 'cleared')
-
+    elif query.data.split('_')[-1] == 'applicationaccept':
+        teachers.append(query.message.chat.id)
+        db.delete_application(query.message.chat.id)
+        bot.send_message(query.message.chat.id, 'accepted')
+    elif query.data.split("_")[-1] == 'applicationreject':
+        db.delete_application(query.message.chat.id)
+        bot.send_message(query.message.chat.id, 'rejected')
 
 bot.polling()

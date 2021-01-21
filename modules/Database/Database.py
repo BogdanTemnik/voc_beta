@@ -7,6 +7,7 @@ class Database:
         self.users_db = self.client['users']
         self.words_db = self.client['words']
         self.history_db = self.client['history']
+        self.applications_db = self.client['application']
 
         self.dbs = {
             'words': self.words_db,
@@ -24,23 +25,26 @@ class Database:
 
         return collection.find({}).skip(start).limit(stop).sort([('languages.src', 1)])
 
+    def send_application_for_teaching(self, message):
+        self.applications_db[f'applications'].insert_one({'name': message.chat.first_name, 'id': message.chat.id})
+
     def auth_user(self, message):
-        current_user_data_collection = self.users_db[f'{message.chat.id}']
-        current_user_data_collection.insert_one(
-            {
-                'first_name': message.chat.first_name,
-                'last_name': message.chat.last_name,
-                'username': message.chat.username,
-                'auth_datetime': datetime.datetime.now()
-            }
-        )
+        if str(message.chat.id) not in self.users_db.list_collection_names():
+            current_user_data_collection = self.users_db[f'{message.chat.id}']
+            current_user_data_collection.insert_one(
+                {
+                    'first_name': message.chat.first_name,
+                    'last_name': message.chat.last_name,
+                    'username': message.chat.username,
+                    'id': message.chat.id,
+                    'auth_datetime': datetime.datetime.now()
+                }
+            )
 
     def add_one_to_voc(self, word_obj, message, module=None):
         #insert user object into current user collection
         if f'{message.chat.id}' not in self.words_db.list_collection_names():
             self.auth_user(message)
-        #word_obj['values']['src'] = word_obj['values']['src'].lower()
-        #word_obj['values']['dest'] = word_obj['values']['dest'].lower()
 
         #change module to current
         word_obj['module'] = self.current_module
@@ -55,14 +59,6 @@ class Database:
         current_collection = self.words_db[f'{id}']
         print(len([el for el in current_collection.find({'module': m}).skip(skip).limit(count).sort([('languages.src', 1)])]))
         return [el for el in current_collection.find({'module': m}).skip(skip).limit(count).sort([('languages.src', 1)])]
-
-    '''def create_module(self, message):
-        back_from_module_creating_keyboard = types.InlineKeyboardMarkup()
-        back_from_module_creating_keyboard.add(types.InlineKeyboardButton('back', callback_data='back_from_module_creating'))
-        bot.send_message(message.chat.id, 'module must include at least 1 word, please input it:', reply_markup=back_from_module_creating_keyboard)
-
-        self.modules_db[f'{message.chat.id}'].insert_one(self.tr.create_object(message.text))
-'''
 
     def collection_length(self, id, module=None, all=False):
         if all:
@@ -136,3 +132,9 @@ class Database:
 
     def clear_vocabulary(self, id):
         self.words_db[f'{id}'].remove()
+
+    def is_unique_application(self, id):
+        return True if not [el for el in self.applications_db['applications'].find({'id': id})] else False
+
+    def delete_application(self, id):
+        self.applications_db['applications'].delete_one({'id': id})
