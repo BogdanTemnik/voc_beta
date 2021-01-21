@@ -15,15 +15,18 @@ module = Module()
 skip = 0
 count = 0
 
+
 main_keyboard = types.ReplyKeyboardMarkup()
 
 main_keyboard.add(types.KeyboardButton('translate'), types.KeyboardButton('my vocabulary'))
 main_keyboard.add(types.KeyboardButton('new module'), types.KeyboardButton('manage modules'))
+teachers_keyboard = types.ReplyKeyboardMarkup()
+teachers_keyboard.add(types.KeyboardButton(''))
 
 
 trans = Translator()
 
-@bot.message_handler(commands=['start', 'help', 'translate', 'test'])
+@bot.message_handler(commands=['start', 'help', 'translate', 'test', 'forteachers'])
 def get_command(message):
     if message.text == '/translate':
         pass
@@ -31,6 +34,8 @@ def get_command(message):
         bot.send_message(message.chat.id, 'lets learn new words!', reply_markup=main_keyboard)
     elif message.text == '/test':
         print(module.stats)
+    elif message.text == '/forteachers':
+        pass
 
 @bot.message_handler(content_types=['text'])
 def get_text_command(message):

@@ -11,4 +11,3 @@ parts_of_speech = {'CC': 'coordinating conjunction', 'CD': 'cardinal digit', 'DT
 modules_methods = ['rename', 'add', 'edit', 'delete']
 
 bot_object = telebot.TeleBot(TOKEN)
-
