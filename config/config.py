@@ -1,8 +1,4 @@
 import telebot
-from modules.Database.Database import Database
-from pymongo import MongoClient
-
-db = Database()
 
 TOKEN = '1401690541:AAFOAOKMsLfKP0p1r3e9do-NWEz9GWKdSRE'
 

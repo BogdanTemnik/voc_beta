@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 import datetime
+from config.config import bot_object as bot
 
 class Database:
     def __init__(self):
@@ -8,6 +9,7 @@ class Database:
         self.words_db = self.client['words']
         self.history_db = self.client['history']
         self.applications_db = self.client['application']
+        self.classes_db = self.client['classes']
 
         self.dbs = {
             'words': self.words_db,
@@ -18,8 +20,12 @@ class Database:
         self.current_option = None
         self.all = False
 
+    def get_students(self, teacher_id):
+        return [el for el in self.classes_db[f'{teacher_id}'].find()]
+
     def get_full_words(self, id, skip, count):
         return [el for el in self.words_db[f'{id}'].find({}).skip(skip).limit(count).sort([('languages.src', 1)])]
+
     def prepare_data(self, start, stop, id):
         collection = self.words_db[id]
 
@@ -115,8 +121,8 @@ class Database:
     def get_all_module_words(self, id, module):
         return [el for el in self.words_db[str(id)].find({'module': module})]
 
-    def insert_stats(self, id, history):
-        self.history_db[str(id)].insert_one({'datetime': datetime.datetime.now(), 'results': history})
+    def insert_stats(self, id, history, how_many_learnt, whole_count):
+        self.history_db[str(id)].insert_one({'datetime': datetime.datetime.now(), 'results': history,'howmanylearnt': how_many_learnt, 'whole': whole_count})
 
     def is_vocabulary_permeability(self, id):
         return True if 'words' in [el['name'] for el in self.client.list_databases()] and self.words_db[f'{id}'].count() != 0 else False
@@ -138,3 +144,31 @@ class Database:
 
     def delete_application(self, id):
         self.applications_db['applications'].delete_one({'id': id})
+
+    def is_int(self, string):
+        try:
+            int(string)
+        except:
+            return False
+        else:
+            return True
+
+    def is_user(self, id):
+        return True if id in [int(el) for el in self.users_db.list_collection_names()] else False
+
+    def kick_student(self, teacher_id, student_id):
+        self.classes_db[f'{teacher_id}'].delete_one({'student_id': student_id})
+
+    def history_permeability(self, id):
+        return True if 'history' in [el['name'] for el in self.client.list_databases()] and self.history_db[f'{id}'].count() != 0 else False
+
+    def get_class_statistic(self, teacher_id):
+        stats = []
+        try:
+            for student in self.classes_db[f'{teacher_id}'].find():
+                stats.append({'name': student['name'], 'total': [el for el in self.history_db[f"{student['student_id']}"].aggregate([{'$group': {'_id': None,'howmanylearnt': {'$sum': '$howmanylearnt'}}}])][0]['howmanylearnt']})
+            return stats
+        except:
+            bot.send_message(teacher_id, 'error')
+
+        print(stats)

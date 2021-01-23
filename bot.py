@@ -5,15 +5,13 @@ from modules.Database.Database import Database
 from modules.Vocabulary.Vocabulary import Vocabulary
 from modules.Module.Module import Module
 from modules.Admin.Admin import Admin
-import random
-import telebot
-import time
-import smtplib
+from modules.Teacher.Teacher import Teacher
 
 db = Database()
 voc = Vocabulary()
 module = Module()
 admin = Admin()
+teacher = Teacher()
 
 skip = 0
 count = 0
@@ -93,7 +91,16 @@ def get_text_command(message):
         bot.send_message(message.chat.id, 'enter module name')
         bot.register_next_step_handler(message, module.send_choice)
     elif message.text == 'manage students':
-        pass
+        if teacher.is_class_permeability(message.chat.id):
+            teacher.send_students(message.chat.id)
+        else:
+            add_first_student = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton('add', callback_data='add_first_student'))
+            bot.send_message(message.chat.id, 'you can add first student to the class', reply_markup=add_first_student)
+    elif message.text == 'class statistic':
+        if teacher.is_class_permeability(message.chat.id):
+            teacher.send_class_statistic(message.chat.id)
+        else:
+            bot.send_message(message.chat.id, 0)
     elif message.text == 'become teacher':
         if db.is_unique_application(message.chat.id) and message.chat.id not in teachers:
             db.send_application_for_teaching(message)
@@ -118,7 +125,20 @@ def get_query(query):
     if query.data == 'more_create_module':
         bot.send_message(query.message.chat.id, 'enter module name')
         bot.register_next_step_handler(query.message, module.send_choice)
-    if query.data.split('_')[-1] == 'None':
+    elif query.data == 'view_student_stats':
+        pass
+    elif query.data == 'add_first_student':
+        bot.send_message(query.message.chat.id, 'enter student id')
+        bot.register_next_step_handler(query.message, teacher.logic_get_student_id)
+    elif query.data == 'kick_student':
+        db.kick_student(query.message.chat.id, teacher.current_student_id)
+        bot.send_message(query.message.chat.id, f'{teacher.current_student_id} student was deleted')
+    elif query.data.split('_')[-1] == 'student':
+        print(query.data)
+        teacher.current_student_id = int(query.data.split('_')[0])
+        student_options_keyboard = types.InlineKeyboardMarkup().add(types.InlineKeyboardButton('kick', callback_data='kick_student'), types.InlineKeyboardButton('view statistic', callback_data='view_student_stats'))
+        bot.send_message(query.message.chat.id, '.', reply_markup=student_options_keyboard)
+    elif query.data.split('_')[-1] == 'None':
         #db.current_module = query.data.split('_')[1]
         voc.send_full_word(query.message.chat.id, module.current_ten[(int(query.data.split('_')[0]) % 10) - 1])
     elif query.data.split('_')[-1] == 'firstinsertfromvocabulary':
@@ -221,7 +241,6 @@ def get_query(query):
         module.learn_word(query.message)
     elif query.data.split('_')[-1] == 'answer':
         if query.data.split('_')[0] == module.current_learning_words[module.learning_word]['values']['dest']:
-            module.stats['correct_count'] += 1
             module.chose_truth_answer(query.message, correct=True)
         else:
             module.chose_truth_answer(query.message, correct=False)
@@ -247,7 +266,7 @@ def get_query(query):
         module.logic_add_new_word_to_module(query.message)
 
     elif query.data == 'view_results':
-        db.insert_stats(query.message.chat.id, module.learn_history)
+        db.insert_stats(query.message.chat.id, module.learn_history, module.stats['correct_count'], module.stats['whole_count'])
         module.send_stats(query.message.chat.id)
 
     elif query.data == 'add_new_word_from_vocabulary':

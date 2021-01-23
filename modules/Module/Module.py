@@ -28,6 +28,8 @@ class Module():
         self.current_word_index = None
         self.current_words = None
         self.wrong_answers = None
+        self.how_many_learnt = 0
+        self.whole_count = 0
 
     def send_current_ten(self, id, skip, count, module=None, option=None, all=False, edit=False):
         print('option', option)
@@ -142,6 +144,7 @@ class Module():
 
     def chose_truth_answer(self, message, correct=True):
         if correct:
+            self.stats['correct_count'] += 1
             bot.send_message(message.chat.id, f'correct✅ {self.stats["correct_count"]}/{self.stats["whole_count"]}', reply_markup=self.view_results_keyboard if self.learning_word + 1 == len(self.current_learning_words) else self.next_learning_word_keyboard)
             self.learn_history.append({'type': 'choose', 'wrong_answers': self.wrong_answers, 'correct_answer': self.current_learning_words[self.learning_word]['values']['src'], 'is_correct': True})
         else:
